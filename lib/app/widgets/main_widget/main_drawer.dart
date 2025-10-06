@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webinar/app/pages/authentication_page/login_page.dart';
 import 'package:webinar/app/pages/main_page/blog_page/blogs_page.dart';
+import 'package:webinar/app/pages/main_page/home_page/band_change_page/band_change_page.dart';
 import 'package:webinar/app/pages/main_page/home_page/certificates_page/certificates_page.dart';
 import 'package:webinar/app/pages/main_page/home_page/assignments_page/assignments_page.dart';
 import 'package:webinar/app/pages/main_page/home_page/financial_page/financial_page.dart';
@@ -48,7 +49,6 @@ class MainDrawer extends StatefulWidget {
 }
 
 class _MainDrawerState extends State<MainDrawer> {
-
   String token = '';
 
   @override
@@ -58,8 +58,7 @@ class _MainDrawerState extends State<MainDrawer> {
     getToken();
   }
 
-  getToken(){
-
+  getToken() {
     AppData.getAccessToken().then((value) {
       setState(() {
         token = value;
@@ -69,24 +68,19 @@ class _MainDrawerState extends State<MainDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppLanguageProvider>(
-      builder: (context, provider, _) {
+    return Consumer<AppLanguageProvider>(builder: (context, provider, _) {
+      getToken();
 
-        getToken();
-
-        return directionality(
+      return directionality(
           child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Padding(
-              padding: const EdgeInsetsDirectional.only(start: 21),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  
-                  // user Profile
-                  Consumer<UserProvider>(
-                    builder: (context, userProiver,_) {
-                      
+              backgroundColor: Colors.transparent,
+              body: Padding(
+                padding: const EdgeInsetsDirectional.only(start: 21),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // user Profile
+                    Consumer<UserProvider>(builder: (context, userProiver, _) {
                       return Container(
                         margin: EdgeInsetsDirectional.only(
                           top: getSize().height * .12,
@@ -94,12 +88,10 @@ class _MainDrawerState extends State<MainDrawer> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            
-
                             // user image
                             GestureDetector(
-                              onTap: (){
-                                if(hasAccess()){
+                              onTap: () {
+                                if (hasAccess()) {
                                   nextRoute(SettingPage.pageName);
                                 }
                               },
@@ -107,101 +99,100 @@ class _MainDrawerState extends State<MainDrawer> {
                               child: Stack(
                                 clipBehavior: Clip.none,
                                 children: [
-                            
                                   ClipRRect(
                                     borderRadius: borderRadius(radius: 65),
                                     child: token.isEmpty
-                                  ? Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle
-                                      ),
-                                      child: Image.asset(AppAssets.appLogoPng,fit:BoxFit.cover ,)
-                                      
-                                    //   SvgPicture.asset(
-                                    //     AppAssets.splashLogoSvg,
-                                    //     width: 65,
-                                    //     height: 65,
-                                    // ),
-                                  )
-                                  : Image.network(
-                                      userProiver.profile?.avatar ?? '', 
-                                      width: 65,
-                                      height: 65,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Image.asset(AppAssets.placePng, width: 65, height: 65, fit: BoxFit.cover);
-                                      },
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                            
-                                  if(token.isNotEmpty)...{
+                                        ? Container(
+                                            width: 60,
+                                            height: 60,
+                                            decoration: const BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle),
+                                            child: Image.asset(
+                                              AppAssets.appLogoPng,
+                                              fit: BoxFit.cover,
+                                            )
 
+                                            //   SvgPicture.asset(
+                                            //     AppAssets.splashLogoSvg,
+                                            //     width: 65,
+                                            //     height: 65,
+                                            // ),
+                                            )
+                                        : Image.network(
+                                            userProiver.profile?.avatar ?? '',
+                                            width: 65,
+                                            height: 65,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Image.asset(
+                                                  AppAssets.placePng,
+                                                  width: 65,
+                                                  height: 65,
+                                                  fit: BoxFit.cover);
+                                            },
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                  if (token.isNotEmpty) ...{
                                     PositionedDirectional(
                                       bottom: -3,
                                       end: -3,
                                       child: Container(
                                         width: 24,
                                         height: 24,
-                              
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.white,
                                         ),
-                              
                                         alignment: Alignment.center,
-                                        child: SvgPicture.asset(AppAssets.settingSvg),
+                                        child: SvgPicture.asset(
+                                            AppAssets.settingSvg),
                                       ),
                                     )
                                   }
-                            
-                                ],  
+                                ],
                               ),
                             ),
 
                             space(12),
 
-
                             // name
                             Text(
                               userProiver.profile?.fullName ?? appText.webinar,
-                              style: style16Bold().copyWith(color: Colors.white),
+                              style:
+                                  style16Bold().copyWith(color: Colors.white),
                             ),
-                            
+
                             space(3),
 
                             Container(
                               width: 25,
                               height: 3,
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: borderRadius()
-                              ),
+                                  color: Colors.white,
+                                  borderRadius: borderRadius()),
                             )
                           ],
                         ),
                       );
-                    }
-                  ),
+                    }),
 
-                  Expanded(
-                    child: SingleChildScrollView(
+                    Expanded(
+                        child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       child: Column(
                         children: [
-
                           space(15),
-                          
-                          menuItem(appText.home, AppAssets.homeSvg, (){
-                            if(locator<PageProvider>().page != PageNames.home){
+
+                          menuItem(appText.home, AppAssets.homeSvg, () {
+                            if (locator<PageProvider>().page !=
+                                PageNames.home) {
                               locator<PageProvider>().setPage(PageNames.home);
                             }
-                            
+
                             drawerController.hideDrawer();
                           }),
-
 
                           // if(token.isNotEmpty)
                           // menuItem(appText.logOut, AppAssets.dashboardSvg, ()async{
@@ -233,80 +224,86 @@ class _MainDrawerState extends State<MainDrawer> {
                           //   }),
                           //
 
-
-
-
-                          menuItem(appText.dashboard, AppAssets.dashboardSvg, (){
-                            if(hasAccess(canRedirect: true)){
+                          menuItem(appText.dashboard, AppAssets.dashboardSvg,
+                              () {
+                            if (hasAccess(canRedirect: true)) {
                               nextRoute(DashboardPage.pageName);
                             }
                           }),
-                          
+
                           // menuItem(appText.blog, AppAssets.blogSvg, (){
                           //   if(hasAccess(canRedirect: true)){
                           //     nextRoute(BlogsPage.pageName);
                           //   }
                           // }),
-                          
-                          menuItem(appText.classes, AppAssets.classesSvg, (){
-                            if(hasAccess(canRedirect: true)){
-                              if(locator<PageProvider>().page != PageNames.myClasses){
-                                locator<PageProvider>().setPage(PageNames.myClasses);
+
+                          menuItem(appText.classes, AppAssets.classesSvg, () {
+                            if (hasAccess(canRedirect: true)) {
+                              if (locator<PageProvider>().page !=
+                                  PageNames.myClasses) {
+                                locator<PageProvider>()
+                                    .setPage(PageNames.myClasses);
                               }
 
                               drawerController.hideDrawer();
                             }
                           }),
-                          
+
                           // menuItem(appText.meetings, AppAssets.meetingsSvg, (){
                           //   if(hasAccess(canRedirect: true)){
                           //     nextRoute(MeetingsPage.pageName);
                           //   }
                           // }),
 
-                          
-                          menuItem(appText.enrollment, AppAssets.supportSvg, (){
-                            if(hasAccess(canRedirect: true)){
+                          menuItem(appText.enrollment, AppAssets.supportSvg,
+                              () {
+                            if (hasAccess(canRedirect: true)) {
                               nextRoute(EnrollmentPage.pageName);
                             }
                           }),
-                          
+
                           // menuItem(appText.assignments, AppAssets.assignmentsSvg, (){
                           //   if(hasAccess(canRedirect: true)){
                           //     nextRoute(AssignmentsPage.pageName);
                           //   }
-                          // }), 
-                          
-                          menuItem(appText.quizzes, AppAssets.quizzesSvg, (){
-                            if(hasAccess(canRedirect: true)){
+                          // }),
+
+                          menuItem(appText.quizzes, AppAssets.quizzesSvg, () {
+                            if (hasAccess(canRedirect: true)) {
                               nextRoute(QuizzesPage.pageName);
                             }
                           }),
-                          
+
                           // menuItem(appText.certificates, AppAssets.certificatesSvg, (){
                           //   if(hasAccess(canRedirect: true)){
                           //     nextRoute(CertificatesPage.pageName);
                           //   }
                           // }),
-                          
-                          menuItem(appText.favorites, AppAssets.favoritesSvg, (){
-                            if(hasAccess(canRedirect: true)){
+
+                          menuItem(appText.favorites, AppAssets.favoritesSvg,
+                              () {
+                            if (hasAccess(canRedirect: true)) {
                               nextRoute(FavoritesPage.pageName);
                             }
                           }),
-                          
+
+                          menuItem('تغير الفرقة', AppAssets.filterSvg, () {
+                            if (hasAccess(canRedirect: true)) {
+                              nextRoute(BandChangePage.pageName);
+                            }
+                          }),
+
                           // menuItem(appText.comments, AppAssets.commentsSvg, (){
                           //   if(hasAccess(canRedirect: true)){
                           //     nextRoute(CommentsPage.pageName);
                           //   }
                           // }),
-                          
+
                           // menuItem(appText.financial, AppAssets.financialSvg, (){
                           //   if(hasAccess(canRedirect: true)){
                           //     nextRoute(FinancialPage.pageName);
                           //   }
                           // }),
-                          
 
                           // menuItem(isPng: true, appText.chat, AppAssets.chatIconPng, (){
                           //   if(hasAccess(canRedirect: true)){
@@ -314,10 +311,11 @@ class _MainDrawerState extends State<MainDrawer> {
                           //   }
                           // }),
 
-
-
-                          menuItem(isPng: true, appText.gpt, AppAssets.chatIconPng, (){
-                            if(hasAccess(canRedirect: true)){
+                          menuItem(
+                              isPng: true,
+                              appText.gpt,
+                              AppAssets.chatIconPng, () {
+                            if (hasAccess(canRedirect: true)) {
                               nextRoute(AiPage.pageName);
                             }
                           }),
@@ -327,9 +325,9 @@ class _MainDrawerState extends State<MainDrawer> {
                           //     nextRoute(SubscriptionPage.pageName);
                           //   }
                           // }),
-                          
-                          menuItem(appText.support, AppAssets.supportSvg, (){
-                            if(hasAccess(canRedirect: true)){
+
+                          menuItem(appText.support, AppAssets.supportSvg, () {
+                            if (hasAccess(canRedirect: true)) {
                               nextRoute(SupportMessagePage.pageName);
                             }
                           }),
@@ -344,233 +342,225 @@ class _MainDrawerState extends State<MainDrawer> {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: ()async{
-                                  await launchUrl(Uri.parse("https://wa.me/+201067694305"));
+                                onTap: () async {
+                                  await launchUrl(
+                                      Uri.parse("https://wa.me/+201067694305"));
                                 },
                                 child: const FaIcon(
                                   FontAwesomeIcons.whatsapp,
                                   color: Colors.green, // لون تيليجرام
-                                  size: 30.0,         // حجم الأيقونة
+                                  size: 30.0, // حجم الأيقونة
                                 ),
                               ),
                               const SizedBox(width: 10),
                               const Text("|"),
                               // SizedBox(width: 10),
-                              TextButton(onPressed: () async{
-                                await launchUrl(Uri.parse("https://wa.me/+201067694305"));
-                              },
+                              TextButton(
+                                  onPressed: () async {
+                                    await launchUrl(Uri.parse(
+                                        "https://wa.me/+201067694305"));
+                                  },
                                   child: const Text("+201067694305")),
                             ],
                           ),
+                        ],
+                      ),
+                    )),
 
+                    space(10),
 
+                    Container(
+                      width: getSize().width,
+                      margin: const EdgeInsets.only(bottom: 40),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // login + language
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // language
+                              GestureDetector(
+                                onTap: () async {
+                                  MainWidget.showLanguageDialog();
+                                },
+                                behavior: HitTestBehavior.opaque,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: borderRadius(),
+                                      child: Image.asset(
+                                        '${AppAssets.flags}${locator<AppLanguage>().currentLanguage}.png',
+                                        width: 21,
+                                        height: 20,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    space(0, width: 6),
+                                    Text(
+                                      locator<AppLanguage>()
+                                              .appLanguagesData[
+                                                  locator<AppLanguage>()
+                                                      .appLanguagesData
+                                                      .indexWhere((element) =>
+                                                          element.code!
+                                                              .toLowerCase() ==
+                                                          locator<AppLanguage>()
+                                                              .currentLanguage
+                                                              .toLowerCase())]
+                                              .name ??
+                                          '',
+                                      style: style12Regular()
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                    space(0, width: 6),
+                                    Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      color: Colors.white.withOpacity(.6),
+                                    )
+                                  ],
+                                ),
+                              ),
+
+                              // line
+                              Container(
+                                margin: padding(horizontal: 8),
+                                width: 1.5,
+                                height: 18,
+                                color: Colors.white.withOpacity(.5),
+                              ),
+
+                              GestureDetector(
+                                onTap: () async {
+                                  if (token.isNotEmpty) {
+                                    drawerController.hideDrawer();
+
+                                    // logout
+                                    UserService.logout();
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 200));
+
+                                    AppData.saveAccessToken('');
+                                    AppDataBase.clearBox();
+
+                                    locator<UserProvider>().clearAll();
+                                    locator<AppLanguageProvider>()
+                                        .changeState();
+                                  } else {
+                                    AppData.saveAccessToken('');
+                                    nextRoute(LoginPage.pageName,
+                                        isClearBackRoutes: true);
+                                  }
+                                },
+                                behavior: HitTestBehavior.opaque,
+                                child: SizedBox(
+                                  height: 35,
+                                  width: 45,
+                                  child: Center(
+                                    child: Text(
+                                      token.isNotEmpty
+                                          ? appText.logOut
+                                          : appText.login,
+                                      style: style12Regular().copyWith(
+                                          color: Colors.white, height: .8),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+
+                          space(12),
+
+                          // currency
+                          GestureDetector(
+                            onTap: () {
+                              MainWidget.showCurrencyDialog();
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 21,
+                                  height: 21,
+                                  decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(.2),
+                                      borderRadius: borderRadius(radius: 5)),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    CurrencyUtils.getSymbol(
+                                        CurrencyUtils.userCurrency),
+                                    style: style12Regular().copyWith(
+                                        color: Colors.white, height: 1),
+                                  ),
+                                ),
+                                space(0, width: 6),
+                                Text(
+                                  CurrencyUtils.userCurrency,
+                                  style: style12Regular()
+                                      .copyWith(color: Colors.white),
+                                ),
+                                space(0, width: 6),
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: Colors.white.withOpacity(.6),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     )
-                  ),
-
-                  space(10),
-
-
-
-                  Container(
-                    width: getSize().width,
-                    margin: const EdgeInsets.only(bottom: 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        // login + language
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-
-                            // language
-                            GestureDetector(
-                              onTap: () async {
-                                MainWidget.showLanguageDialog();
-                              },
-                              behavior: HitTestBehavior.opaque,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                            
-                                  ClipRRect(
-                                    borderRadius: borderRadius(),
-                                    child: Image.asset(
-                                      '${AppAssets.flags}${locator<AppLanguage>().currentLanguage}.png',
-                                      width: 21,
-                                      height: 20,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                            
-                                  space(0,width: 6),
-                            
-                                  Text(
-                                    locator<AppLanguage>().appLanguagesData[locator<AppLanguage>().appLanguagesData.indexWhere((element) => element.code!.toLowerCase() == locator<AppLanguage>().currentLanguage.toLowerCase())].name ?? '',
-                                    style: style12Regular().copyWith(color: Colors.white),
-                                  ),
-                            
-                                  space(0,width: 6),
-                                  
-                                  Icon(Icons.keyboard_arrow_down_rounded,color: Colors.white.withOpacity(.6),)
-                                ],
-                              ),
-                            ),
-
-
-                            // line
-                            Container(
-                              margin: padding(horizontal: 8),
-                              width: 1.5,
-                              height: 18,
-                              color: Colors.white.withOpacity(.5),
-                            ),
-                            
-
-                            GestureDetector(
-                              onTap: () async {
-
-                                if(token.isNotEmpty){
-                                  drawerController.hideDrawer();
-                                  
-                                  // logout
-                                  UserService.logout();
-                                  await Future.delayed(const Duration(milliseconds: 200));
-
-                                  AppData.saveAccessToken('');
-                                  AppDataBase.clearBox();
-                                  
-                                  locator<UserProvider>().clearAll();
-                                  locator<AppLanguageProvider>().changeState();
-
-                                }else{
-                                  AppData.saveAccessToken('');
-                                  nextRoute(LoginPage.pageName, isClearBackRoutes: true);
-                                }
-                              },
-                              behavior: HitTestBehavior.opaque,
-                              child: SizedBox(
-                                
-                                height: 35,
-                                width: 45,
-                                child: Center(
-                                  child: Text(
-                                    token.isNotEmpty
-                                      ? appText.logOut
-                                      : appText.login,
-                                    style: style12Regular().copyWith(color: Colors.white, height: .8),
-                                  ),
-                                ),
-                              ),
-                            )
-
-                          ],
-                        ),
-
-                        space(12),
-
-                        // currency
-                        GestureDetector(
-                          onTap: (){
-                            MainWidget.showCurrencyDialog();
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                        
-                              Container(
-                                width: 21,
-                                height: 21,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(.2),
-                                  borderRadius: borderRadius(radius: 5)
-                                ),
-                                alignment: Alignment.center,
-
-                                child: Text(
-                                  CurrencyUtils.getSymbol(CurrencyUtils.userCurrency),
-                                  style: style12Regular().copyWith(color: Colors.white,height: 1),
-                                ),
-                              ),
-                        
-                              space(0,width: 6),
-                        
-                              Text(
-                                CurrencyUtils.userCurrency,
-                                style: style12Regular().copyWith(color: Colors.white),
-                              ),
-                        
-                              space(0,width: 6),
-                              
-                              Icon(Icons.keyboard_arrow_down_rounded,color: Colors.white.withOpacity(.6),)
-                            ],
-                          ),
-                        ),
-
-                      ],
-                    ),
-                  )
-            
-                ],
-              ),
-            )
-          )
-        );
-      }
-    );
+                  ],
+                ),
+              )));
+    });
   }
 
-  bool hasAccess({bool canRedirect=false}){
-    if(token.isEmpty){
+  bool hasAccess({bool canRedirect = false}) {
+    if (token.isEmpty) {
       showSnackBar(ErrorEnum.alert, appText.youHaveNotAccess);
-      if(canRedirect){
-        nextRoute(LoginPage.pageName,isClearBackRoutes: true);
+      if (canRedirect) {
+        nextRoute(LoginPage.pageName, isClearBackRoutes: true);
       }
       return false;
-    }else{
+    } else {
       return true;
     }
   }
 
-  Widget menuItem(String name,String iconPath,Function onTap, {bool isPng=false}){
+  Widget menuItem(String name, String iconPath, Function onTap,
+      {bool isPng = false}) {
     return Container(
       width: getSize().width,
       margin: const EdgeInsets.only(bottom: 20),
-
       child: GestureDetector(
-        onTap: (){
+        onTap: () {
           onTap();
         },
         child: Row(
           children: [
-
-            if(isPng)
+            if (isPng)
               Image.asset(
                 iconPath,
                 width: 20,
                 height: 20,
               ),
-            
-            if(!isPng)
-            SvgPicture.asset(
-              iconPath,
-              color: Colors.white,
-            ),
-      
-            space(0,width: 8),
-      
+            if (!isPng)
+              SvgPicture.asset(
+                iconPath,
+                color: Colors.white,
+              ),
+            space(0, width: 8),
             Text(
               name,
               style: style16Regular().copyWith(color: Colors.white),
             )
-      
           ],
         ),
       ),
-
     );
   }
 }
