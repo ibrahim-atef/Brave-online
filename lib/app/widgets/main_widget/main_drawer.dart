@@ -287,7 +287,7 @@ class _MainDrawerState extends State<MainDrawer> {
                             }
                           }),
 
-                          menuItem('تغير الفرقة', AppAssets.filterSvg, () {
+                          menuItem(appText.bandChange, AppAssets.filterSvg, () {
                             if (hasAccess(canRedirect: true)) {
                               nextRoute(BandChangePage.pageName);
                             }

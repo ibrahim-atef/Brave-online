@@ -616,7 +616,17 @@
     "profileImage" : "Profile Image",
     "chooseCollege": "Choose College",
     "chooseLevel": "Choose Level",
-    "studentPassedTheQuiz" : "Student passed the quiz"
+    "studentPassedTheQuiz" : "Student passed the quiz",
+    "bandChange": "Band Change",
+    "chooseBand": "Choose Band:",
+    "chooseBandHint": "Choose Band",
+    "confirmBandChange": "Confirm Band Change",
+    "bandChangeConfirmed": "Band Change Confirmed",
+    "bandChangeSuccessMessage": "Band change request has been confirmed successfully.",
+    "selectedBand": "Selected Band:",
+    "ok": "OK",
+    "notSpecified": "Not Specified",
+    "changeBand": "Change Band"
     
 
 

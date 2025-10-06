@@ -616,7 +616,17 @@
     "profileImage" : "الصورة الشخصية",
     "chooseCollege" : "اختار الكلية",
     "chooseLevel" : "اختار الفرقة",
-    "studentPassedTheQuiz" : "اجتاز الطالب الاختبار"
+    "studentPassedTheQuiz" : "اجتاز الطالب الاختبار",
+    "bandChange" : "تغيير الفرقة",
+    "chooseBand" : "اختر الفرقة:",
+    "chooseBandHint" : "اختر الفرقة",
+    "confirmBandChange" : "تأكيد تغيير الفرقة",
+    "bandChangeConfirmed" : "تم تأكيد تغيير الفرقة",
+    "bandChangeSuccessMessage" : "تم تأكيد طلب تغيير الفرقة بنجاح.",
+    "selectedBand" : "الفرقة المختارة:",
+    "ok" : "موافق",
+    "notSpecified" : "غير محدد",
+    "changeBand" : "تغير الفرقة"
 
 
 

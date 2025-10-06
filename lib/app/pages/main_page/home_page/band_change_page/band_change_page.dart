@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webinar/app/widgets/drop_down_custom_textfailed.dart';
 import 'package:webinar/common/common.dart';
 import 'package:webinar/common/components.dart';
+import 'package:webinar/common/utils/app_text.dart';
 import 'package:webinar/config/colors.dart';
 
 class BandChangePage extends StatefulWidget {
@@ -23,16 +24,16 @@ class _BandChangePageState extends State<BandChangePage> {
   Widget build(BuildContext context) {
     return directionality(
       child: Scaffold(
-        appBar: appbar(title: 'تغيير الفرقة'),
+        appBar: appbar(title: appText.bandChange),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: padding(vertical: 20, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'اختر الفرقة:',
-                style: TextStyle(
+              Text(
+                appText.chooseBand,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -43,7 +44,7 @@ class _BandChangePageState extends State<BandChangePage> {
               // Band Level Dropdown
               DropDownCustomTextfailed(
                 prefixIcon: const Icon(Icons.arrow_drop_down),
-                hintText: 'اختر الفرقة',
+                hintText: appText.chooseBandHint,
                 dropdownItems: bandLevels,
                 onDropdownChanged: (value) {
                   setState(() {
@@ -67,9 +68,9 @@ class _BandChangePageState extends State<BandChangePage> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'تأكيد تغيير الفرقة',
-                    style: TextStyle(
+                  child: Text(
+                    appText.confirmBandChange,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -95,17 +96,17 @@ class _BandChangePageState extends State<BandChangePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('تم تأكيد تغيير الفرقة'),
+          title: Text(appText.bandChangeConfirmed),
           content: Text(
-            'تم تأكيد طلب تغيير الفرقة بنجاح.\n\n'
-            'الفرقة المختارة: ${selectedBand ?? 'غير محدد'}',
+            '${appText.bandChangeSuccessMessage}\n\n'
+            '${appText.selectedBand} ${selectedBand ?? appText.notSpecified}',
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('موافق'),
+              child: Text(appText.ok),
             ),
           ],
         );
