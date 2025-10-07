@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:headset_connection_event/headset_event.dart';
-import 'package:modern_player/modern_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'full_screen_video_page.dart'; // استيراد صفحة ملء الشاشة
 import 'dart:async'; // استيراد مكتبة Timer
 
@@ -11,42 +10,53 @@ class PodVideoPlayerDev extends StatefulWidget {
   final String name;
   final RouteObserver<ModalRoute<void>> routeObserver;
 
-  const PodVideoPlayerDev(this.url, this.type, this.routeObserver, {super.key, required this.name});
+  const PodVideoPlayerDev(this.url, this.type, this.routeObserver,
+      {super.key, required this.name});
 
   @override
   State<PodVideoPlayerDev> createState() => _VimeoVideoPlayerState();
 }
 
 class _VimeoVideoPlayerState extends State<PodVideoPlayerDev> {
-  bool _isFullScreen = false;
-  double _watermarkPositionX = 0.0;  // متغير لتحديد مكان العلامة المائية أفقياً
-  double _watermarkPositionY = 0.0;  // متغير لتحديد مكان العلامة المائية رأسياً
+  double _watermarkPositionX = 0.0; // متغير لتحديد مكان العلامة المائية أفقياً
+  double _watermarkPositionY = 0.0; // متغير لتحديد مكان العلامة المائية رأسياً
   late Timer _timer;
+  late YoutubePlayerController _controller;
 
   // دالة لتبديل الوضع بين ملء الشاشة والوضع الطبيعي
   void _toggleFullScreen() {
-    setState(() {
-      _isFullScreen = !_isFullScreen;
-    });
+    // حفظ حالة التشغيل الحالية
+    final wasPlaying = _controller.value.isPlaying;
+    final currentPosition = _controller.value.position;
 
-    if (_isFullScreen) {
-      // الانتقال إلى الوضع الأفقي (ملء الشاشة)
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FullScreenVideoPage(url: widget.url, name: widget.name),
+    // الانتقال إلى صفحة ملء الشاشة مع تمرير البيانات المطلوبة
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FullScreenVideoPage(
+          url: widget.url,
+          name: widget.name,
+          initialPosition: currentPosition,
+          wasPlaying: wasPlaying,
         ),
-      ).then((_) {
-        // إعادة تعيين الحالة بعد العودة من ملء الشاشة
-        setState(() {
+      ),
+    ).then((result) {
+      // إعادة تعيين الحالة بعد العودة من ملء الشاشة
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-          _isFullScreen = false;
-          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        });
-          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      });
-    }
+      // تحديث حالة الفيديو إذا تم إرجاع بيانات
+      if (result != null && result is Map<String, dynamic>) {
+        final position = result['position'] as Duration?;
+        final wasPlaying = result['isPlaying'] as bool?;
+
+        if (position != null) {
+          _controller.seekTo(position);
+        }
+        if (wasPlaying != null && wasPlaying) {
+          _controller.play();
+        }
+      }
+    });
   }
   // final _headsetPlugin = HeadsetEvent();
   // HeadsetState? _headsetState;
@@ -54,9 +64,21 @@ class _VimeoVideoPlayerState extends State<PodVideoPlayerDev> {
   @override
   void initState() {
     super.initState();
+
+    // Initialize YoutubePlayerController
+    _controller = YoutubePlayerController(
+      initialVideoId: YoutubePlayer.convertUrlToId(widget.url) ?? '',
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        mute: false,
+        isLive: false,
+        forceHD: false,
+        enableCaption: true,
+      ),
+    );
+
     ///Request Permissions (Required for Android 12)
     // _headsetPlugin.requestPermission();
-
 
     // /// if headset is plugged
     // _headsetPlugin.getCurrentState.then((_val) {
@@ -76,11 +98,8 @@ class _VimeoVideoPlayerState extends State<PodVideoPlayerDev> {
     //   });
     // });
 
-
-
-
     // إعداد الـ Timer لتحريك العلامة المائية كل 3 ثواني
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       setState(() {
         // التبديل بين مكانين مختلفين للعلامة المائية: من الزاوية العلوية اليسرى إلى المنتصف
         if (_watermarkPositionX == 0.0 && _watermarkPositionY == 0.0) {
@@ -93,13 +112,13 @@ class _VimeoVideoPlayerState extends State<PodVideoPlayerDev> {
       });
     });
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
   }
 
   @override
   void dispose() {
     // إلغاء الـ Timer عند تدمير الـ widget لتجنب التسريبات
     _timer.cancel();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -115,50 +134,39 @@ class _VimeoVideoPlayerState extends State<PodVideoPlayerDev> {
           child: SizedBox(
             height: 400, // ارتفاع العرض الطبيعي
             width: MediaQuery.of(context).size.width,
-            child:    Stack(
+            child: Stack(
               children: [
                 SizedBox(
                   height: 250,
                   width: MediaQuery.of(context).size.width,
-                  child: ModernPlayer.createPlayer(
-                    options: ModernPlayerOptions(),
-                    controlsOptions: ModernPlayerControlsOptions(
-                      showControls: true,
-                      doubleTapToSeek: true,
-                      showMenu: true,
-                      showMute: false,
-                      showBackbutton: false,
-                      enableVolumeSlider: true,
-                      enableBrightnessSlider: true,
-                      showBottomBar: true,
-                      customActionButtons: [
-                        ModernPlayerCustomActionButton(
-                          onPressed: _toggleFullScreen,
-                          icon: Icon(
-                            _isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    defaultSelectionOptions: ModernPlayerDefaultSelectionOptions(
-                      defaultQualitySelectors: [DefaultSelectorLabel('360p')],
-                    ),
-                    video: ModernPlayerVideo.youtubeWithUrl(
-                      url: widget.url,
-                      fetchQualities: true,
-                    ),
+                  child: YoutubePlayer(
+                    controller: _controller,
+                    showVideoProgressIndicator: true,
+                    progressIndicatorColor: Colors.blue,
+                    onReady: () {
+                      // Player is ready
+                    },
+                    bottomActions: [
+                      const CurrentPosition(),
+                      const ProgressBar(isExpanded: true),
+                      const RemainingDuration(),
+                      const PlaybackSpeedButton(),
+                      IconButton(
+                        icon: const Icon(Icons.fullscreen),
+                        onPressed: _toggleFullScreen,
+                      ),
+                    ],
                   ),
                 ),
                 // العلامة المائية
                 AnimatedPositioned(
-                  duration: Duration(seconds: 1),
+                  duration: const Duration(seconds: 1),
                   left: _watermarkPositionX == 0.0
                       ? 0
                       : (MediaQuery.of(context).size.width / 2) - 100,
                   top: _watermarkPositionY == 0.0 ? 0 : (250 / 2) - 50,
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     color: Colors.transparent,
                     child: Text(
                       widget.name,
@@ -177,5 +185,4 @@ class _VimeoVideoPlayerState extends State<PodVideoPlayerDev> {
       ),
     );
   }
-
 }

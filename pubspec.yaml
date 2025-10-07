@@ -64,7 +64,6 @@ dependencies:
   flutter_slidable: ^3.1.2
   webview_flutter: ^4.4.2
 
-  modern_player: ^0.1.0
 
   flutter_tts: ^4.0.2
   table_calendar: ^3.0.9
